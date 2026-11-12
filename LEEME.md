@@ -10,7 +10,7 @@ Para sumar o actualizar un aliado, agrega su logo a `assets/stores/` y una entra
 
 ### Cartas y catálogos
 
-SD Delivery administra la publicación: por cada comercio, coloca sus archivos en `assets/menus/<nombre-del-comercio>/` y agrega `menu: { pdf: 'carta.pdf', images: ['pagina-1.jpg', 'pagina-2.jpg'] }` en su entrada de `app.js`. El nombre de la carpeta se genera desde el nombre del comercio en minúsculas, sin tildes y con guiones (por ejemplo, `300 Burger` → `300-burger`). Se admiten un PDF y varias imágenes JPG, PNG o WebP; las tarjetas muestran enlaces solo para los formatos configurados. No hay un panel de carga en la web: esta versión estática requiere copiar los archivos al proyecto y volver a publicar el sitio. No se han añadido cartas porque aún no se recibieron archivos reales.
+SD Delivery administra la publicación: por cada comercio, coloca sus archivos en `assets/menus/<nombre-del-comercio>/` y agrega `menu: { pdf: 'carta.pdf', images: ['pagina-1.jpg', 'pagina-2.jpg'] }` en su entrada de `app.js`. El nombre de la carpeta se genera desde el nombre del comercio en minúsculas, sin tildes y con guiones (por ejemplo, `300 Burger` → `300-burger`). Se admiten un PDF y varias imágenes JPG, PNG o WebP; las tarjetas muestran enlaces solo para los formatos configurados. No hay un panel de carga en la web: esta versión estática requiere copiar los archivos al proyecto y volver a publicar el sitio. Kofetin cuenta con una carta PDF en `assets/menus/kofetin/`.
 
 ## Contacto y operación
 

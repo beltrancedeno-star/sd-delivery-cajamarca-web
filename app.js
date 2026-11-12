@@ -292,7 +292,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     { name: 'Fogón Dorado', category: 'pollos', label: 'Pollos y parrilladas', image: 'fogon-dorado.png' },
     { name: 'Inkafarma', category: 'pharmacy', label: 'Farmacia', image: 'inkafarma.png', shopping: true },
     { name: 'KFC', category: 'pollos', label: 'Pollos y comida rápida', image: 'kfc.jpg' },
-    { name: 'Kofetin', category: 'cafe', label: 'Sándwiches y café', image: 'kofetin.jpg' },
+    { name: 'Kofetin', category: 'cafe', label: 'Sándwiches y café', image: 'kofetin.jpg', menu: { pdf: 'carta-kofetin-2026.pdf' } },
     { name: 'La Chola', category: 'restaurant', label: 'Restaurante', image: 'la-chola.jpg' },
     { name: 'La Gran Estación', category: 'pollos', label: 'Pollería', image: 'la-gran-estacion.jpg' },
     { name: 'Las Chamas', category: 'restaurant', label: 'Restaurante', image: 'las-chamas.png' },
