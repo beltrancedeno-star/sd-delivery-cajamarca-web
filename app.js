@@ -272,7 +272,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     { name: 'Ajies', category: 'restaurant', label: 'Cevichería', image: 'ajies.png' },
     { name: 'Akore Pizza', category: 'pizza', label: 'Pizzería', image: 'akore.jpg' },
     { name: 'Bambino', category: 'cafe', label: 'Cafetería', image: 'bambino.png' },
-    { name: 'Bembos', category: 'restaurant', label: 'Hamburguesas', image: 'bembos.png' },
+    { name: 'Bembos', category: 'restaurant', label: 'Hamburguesas', image: 'bembos.png', menu: { url: 'https://www.bembos.com.pe/menu' } },
     { name: 'BemxSport Sublimaciones', category: 'market', label: 'Personalización y sublimación', image: 'bemx-sport.png' },
     { name: 'Boticas Perú', category: 'pharmacy', label: 'Farmacia', image: 'boticas-peru.png' },
     { name: 'Bunker Fast Food', category: 'restaurant', label: 'Comida rápida', image: 'bunker.jpg' },
@@ -289,9 +289,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     { name: 'El Turco', category: 'restaurant', label: 'Restaurante y cevichería', image: 'el-turco.jpg' },
     { name: 'Falabella', category: 'market', label: 'Tienda por departamento', image: 'falabella.png', shopping: true },
     { name: 'Ferretería Medina', category: 'market', label: 'Ferretería', image: 'ferreteria-medina.png', shopping: true },
-    { name: 'Fogón Dorado', category: 'pollos', label: 'Pollos y parrilladas', image: 'fogon-dorado.png' },
+    { name: 'Fogón Dorado', category: 'pollos', label: 'Pollos y parrilladas', image: 'fogon-dorado.png', menu: { pdf: 'carta-fogon-dorado.pdf' } },
     { name: 'Inkafarma', category: 'pharmacy', label: 'Farmacia', image: 'inkafarma.png', shopping: true },
-    { name: 'KFC', category: 'pollos', label: 'Pollos y comida rápida', image: 'kfc.jpg' },
+    { name: 'KFC', category: 'pollos', label: 'Pollos y comida rápida', image: 'kfc.jpg', menu: { url: 'https://www.kfc.com.pe/carta/ver-todo' } },
     { name: 'Kofetin', category: 'cafe', label: 'Sándwiches y café', image: 'kofetin.jpg', menu: { pdf: 'carta-kofetin-2026.pdf' } },
     { name: 'La Chola', category: 'restaurant', label: 'Restaurante', image: 'la-chola.jpg' },
     { name: 'La Gran Estación', category: 'pollos', label: 'Pollería', image: 'la-gran-estacion.jpg' },
@@ -303,7 +303,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     { name: 'Mr. Grill', category: 'pollos', label: 'Parrillas', image: 'mr-grill.png' },
     { name: 'Obsesion', category: 'cafe', label: 'Casa de té, panadería y pastelería', image: 'obsesion.png' },
     { name: 'Olano Distribuciones', category: 'market', label: 'Distribuciones', image: 'olano.jpg', shopping: true },
-    { name: 'Pizza Hut', category: 'pizza', label: 'Pizzería', image: 'pizza-hut.jpg' },
+    { name: 'Pizza Hut', category: 'pizza', label: 'Pizzería', image: 'pizza-hut.jpg', menu: { url: 'https://www.pizzahut.com.pe/carta/ver-todo' } },
     { name: 'Plaza Vea', category: 'market', label: 'Supermercado', image: 'plaza-vea.png', shopping: true },
     { name: 'Popeyes', category: 'pollos', label: 'Pollo y comida rápida', image: 'popeyes.png' },
     { name: 'Promart', category: 'market', label: 'Hogar y construcción', image: 'promart.png', shopping: true },
@@ -330,6 +330,24 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     const pdf = typeof store.menu.pdf === 'string' && menuFilePattern.test(store.menu.pdf) && /\.pdf$/i.test(store.menu.pdf)
       ? `<a class="store-menu-link" href="${basePath}${encodeURIComponent(store.menu.pdf)}" target="_blank" rel="noopener">Ver carta PDF</a>`
       : '';
+    let external = '';
+    if (store.menu.url) {
+      try {
+        const url = new URL(store.menu.url);
+        if (url.protocol !== 'https:' || url.username || url.password) {
+          throw new Error('Las cartas externas deben usar HTTPS y no incluir credenciales.');
+        }
+        const href = url.href.replace(/[&"<>]/g, character => ({
+          '&': '&amp;',
+          '"': '&quot;',
+          '<': '&lt;',
+          '>': '&gt;'
+        })[character]);
+        external = `<a class="store-menu-link" href="${href}" target="_blank" rel="noopener noreferrer">Ver carta en línea</a>`;
+      } catch (error) {
+        console.error(`Enlace de carta inválido para ${store.name}. Usa una URL HTTPS válida.`, error);
+      }
+    }
     const images = Array.isArray(store.menu.images) ? store.menu.images.filter(file => {
       const valid = typeof file === 'string' && menuFilePattern.test(file) && /\.(jpe?g|png|webp)$/i.test(file);
       if (!valid) console.error(`Archivo de carta inválido para ${store.name}. Usa JPG, PNG o WebP con un nombre simple.`);
@@ -349,7 +367,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       : '';
 
     if (store.menu.pdf && !pdf) console.error(`Archivo PDF inválido para ${store.name}. Usa un nombre simple con extensión .pdf.`);
-    return pdf || gallery ? `<div class="store-menu">${pdf}${gallery}</div>` : '';
+    return pdf || external || gallery ? `<div class="store-menu">${pdf}${external}${gallery}</div>` : '';
   };
 
   grid.innerHTML = stores.map(store => {
