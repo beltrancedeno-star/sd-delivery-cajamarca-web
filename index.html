@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SD Delivery — Servicio local de delivery en Cajamarca con cajas rígidas, coordinación por WhatsApp y atención cercana." />
+  <meta name="keywords" content="delivery Cajamarca, comida a domicilio, SD Delivery, pedidos Cajamarca, delivery rápido" />
+  <meta property="og:title" content="SD Delivery | El Delivery de Cajamarca" />
+  <meta property="og:description" content="Delivery profesional, seguro y personalizado para Cajamarca." />
+  <meta property="og:image" content="assets/sd-delivery-logo.png" />
+  <title>SD Delivery | El Delivery Profesional de Cajamarca</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Navegación principal">
+    <div class="nav-container">
+      <a href="#home" class="nav-logo" aria-label="SD Delivery inicio">
+        <img class="brand-logo-image" src="assets/sd-delivery-logo.png" alt="SD Delivery — Servimovil Dominick" />
+      </a>
+
+      <ul class="nav-links" role="list">
+        <li><a href="#why-us" class="nav-link">¿Por qué nosotros?</a></li>
+        <li><a href="#stores" class="nav-link">Tiendas</a></li>
+        <li><a href="#how-it-works" class="nav-link">Cómo funciona</a></li>
+        <li><a href="#partners" class="nav-link">Comercios</a></li>
+        <li><a href="#contact" class="nav-link">Contacto</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="https://wa.me/51957107660" target="_blank" rel="noopener" class="btn btn-outline" id="nav-whatsapp-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          Escríbenos
+        </a>
+        <a href="#order-request" class="btn btn-primary" id="nav-order-btn">Pide Ahora</a>
+      </div>
+
+      <button class="hamburger" id="hamburger-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <div class="mobile-menu" id="mobile-menu" role="menu" aria-hidden="true">
+      <a href="#why-us" class="mobile-link" role="menuitem">¿Por qué nosotros?</a>
+      <a href="#stores" class="mobile-link" role="menuitem">Tiendas</a>
+      <a href="#how-it-works" class="mobile-link" role="menuitem">Cómo funciona</a>
+      <a href="#partners" class="mobile-link" role="menuitem">Comercios</a>
+      <a href="#contact" class="mobile-link" role="menuitem">Contacto</a>
+      <a href="https://wa.me/51957107660" target="_blank" rel="noopener" class="btn btn-outline mobile-btn" id="mobile-whatsapp-btn">Escríbenos</a>
+      <a href="#order-request" class="btn btn-primary mobile-btn" id="mobile-order-btn">Pide Ahora</a>
+    </div>
+  </nav>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero" id="home" aria-label="Sección principal">
+    <div class="hero-bg-grid" aria-hidden="true"></div>
+    <div class="hero-glow" aria-hidden="true"></div>
+
+    <div class="hero-container">
+      <div class="hero-content" data-reveal>
+        <div class="hero-badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          <span>Disponible en Cajamarca</span>
+        </div>
+
+        <h1 class="hero-title">
+          El Delivery que<br/>
+          <span class="hero-title-accent">Cajamarca</span><br/>
+          se Merece
+        </h1>
+
+        <p class="hero-subtitle">
+          Llevamos tus pedidos con cajas rígidas y atención cercana. Apoyamos al comercio local con entregas coordinadas en Cajamarca.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="#order-request" class="btn btn-hero-primary" id="hero-order-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Pide Ahora
+          </a>
+          <a href="#partners" class="btn btn-hero-secondary" id="hero-partner-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            Asóciate como Comercio
+          </a>
+        </div>
+
+        <div class="hero-trust">
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#E8192C" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>Hecho para Cajamarca</span>
+          </div>
+          <div class="trust-divider" aria-hidden="true"></div>
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#E8192C" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14" stroke="white" stroke-width="2" fill="none"/></svg>
+            <span>Coordinación directa</span>
+          </div>
+          <div class="trust-divider" aria-hidden="true"></div>
+          <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#E8192C" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Cajas rígidas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-reveal-right>
+        <!-- Video de SD Delivery -->
+        <div class="hero-illustration-wrapper">
+          <div class="illustration-glow" aria-hidden="true"></div>
+          <video class="hero-moto-video" muted playsinline controls preload="none" aria-label="Video de SD Delivery">
+            <source src="assets/moto-delivery.mp4" type="video/mp4" />
+            Tu navegador no puede reproducir este video.
+          </video>
+
+          <!-- Floating badges -->
+          <div class="float-badge float-badge-1" aria-label="Tiempo de entrega promedio">
+            <div class="float-badge-icon">⚡</div>
+            <div class="float-badge-text">
+              <span class="badge-value">Atención</span>
+              <span class="badge-label">directa por WhatsApp</span>
+            </div>
+          </div>
+          <div class="float-badge float-badge-2" aria-label="Calificación de satisfacción">
+            <div class="float-badge-icon">🛡️</div>
+            <div class="float-badge-text">
+              <span class="badge-value">Cuidado</span>
+              <span class="badge-label">en cada pedido</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator" aria-label="Desplázate hacia abajo">
+      <div class="scroll-dot"></div>
+    </div>
+  </section>
+
+  <!-- ========== STATS BAR ========== -->
+  <section class="stats-bar" aria-label="Ventajas de SD Delivery">
+    <div class="stats-container">
+      <div class="stat-item">
+        <div class="stat-number">Local</div>
+        <div class="stat-label">Hecho para Cajamarca</div>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <div class="stat-number">Directo</div>
+        <div class="stat-label">Atención por personas</div>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item" data-label="Entregas Protegidas">
+        <div class="stat-number">Seguro</div>
+        <div class="stat-label">Cuidado en cada entrega</div>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <div class="stat-number">Cerca</div>
+        <div class="stat-label">Comercios de la ciudad</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WHY US ========== -->
+  <section class="why-us" id="why-us" aria-label="¿Por qué elegir SD Delivery?">
+    <div class="section-container">
+      <div class="section-header" data-reveal>
+        <div class="section-tag">Nuestros Pilares</div>
+        <h2 class="section-title">¿Por Qué Elegir <span class="text-accent">SD Delivery</span>?</h2>
+        <p class="section-subtitle">
+          No somos solo un app más. Somos la solución de delivery que Cajamarca construyó para Cajamarca.
+        </p>
+      </div>
+
+      <div class="features-grid">
+
+        <!-- Feature 1: Rigid Box -->
+        <div class="feature-card feature-card--highlight" data-reveal>
+          <div class="feature-card-glow" aria-hidden="true"></div>
+          <div class="feature-icon-wrapper">
+            <svg class="feature-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="8" y="20" width="48" height="36" rx="6" fill="#E8192C" fill-opacity="0.15" stroke="#E8192C" stroke-width="2"/>
+              <rect x="6" y="14" width="52" height="10" rx="4" fill="#E8192C" fill-opacity="0.2" stroke="#E8192C" stroke-width="2"/>
+              <path d="M24 20v36M40 20v36" stroke="#E8192C" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <path d="M32 10 L28 14 L36 14 Z" fill="#E8192C"/>
+              <circle cx="32" cy="38" r="6" fill="#E8192C" fill-opacity="0.3" stroke="#E8192C" stroke-width="2"/>
+              <path d="M29 38 L31 40 L35 36" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="feature-tag">Innovación</div>
+          <h3 class="feature-title">Cajas Rígidas,<br/>Pedidos Intactos</h3>
+          <p class="feature-desc">
+            Nuestros repartidores usan <strong>cajas de carga rígidas acopladas a la moto</strong>, no mochilas blandas. Tu comida llega caliente, sin aplastarse y protegida de la lluvia y el polvo cajamarquino. 
+          </p>
+          <div class="feature-compare">
+            <div class="compare-item compare-bad">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#666" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="#666" stroke-width="2"/></svg>
+              <span>Mochila blanda tradicional</span>
+            </div>
+            <div class="compare-item compare-good">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#E8192C" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke="#E8192C" stroke-width="2"/></svg>
+              <span>Caja rígida SD Delivery</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 2: Human Service -->
+        <div class="feature-card" data-reveal>
+          <div class="feature-icon-wrapper">
+            <svg class="feature-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="32" cy="22" r="12" fill="#E8192C" fill-opacity="0.15" stroke="#E8192C" stroke-width="2"/>
+              <path d="M12 52c0-11.046 8.954-20 20-20s20 8.954 20 20" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/>
+              <path d="M32 36 L32 46" stroke="#E8192C" stroke-width="2"/>
+              <path d="M26 42 L32 46 L38 42" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="46" cy="14" r="8" fill="#E8192C" fill-opacity="0.1" stroke="#E8192C" stroke-width="1.5"/>
+              <path d="M43 14 L45 16 L49 12" stroke="#E8192C" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="feature-tag">Personalización</div>
+          <h3 class="feature-title">Atención Humana<br/>y Personalizada</h3>
+          <p class="feature-desc">
+            No somos un algoritmo frío. Nuestro equipo humano atiende y resuelve en tiempo real. 
+            Cada pedido recibe seguimiento puntual y compromiso real con el cliente.
+          </p>
+          <ul class="feature-list" role="list">
+            <li>✓ Comunicación directa siempre</li>
+            <li>✓ Resolución inmediata de incidencias</li>
+            <li>✓ Repartidores capacitados y verificados</li>
+          </ul>
+        </div>
+
+        <!-- Feature 3: Local Commerce -->
+        <div class="feature-card" data-reveal>
+          <div class="feature-icon-wrapper">
+            <svg class="feature-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M32 8 L52 20 L52 44 L32 56 L12 44 L12 20 Z" fill="#E8192C" fill-opacity="0.1" stroke="#E8192C" stroke-width="2"/>
+              <circle cx="32" cy="32" r="10" fill="#E8192C" fill-opacity="0.2" stroke="#E8192C" stroke-width="2"/>
+              <path d="M32 22 L32 32 L40 32" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="20" cy="22" r="4" fill="#E8192C" fill-opacity="0.3" stroke="#E8192C" stroke-width="1.5"/>
+              <circle cx="44" cy="22" r="4" fill="#E8192C" fill-opacity="0.3" stroke="#E8192C" stroke-width="1.5"/>
+              <circle cx="20" cy="42" r="4" fill="#E8192C" fill-opacity="0.3" stroke="#E8192C" stroke-width="1.5"/>
+              <circle cx="44" cy="42" r="4" fill="#E8192C" fill-opacity="0.3" stroke="#E8192C" stroke-width="1.5"/>
+              <path d="M23 22 L28 30" stroke="#E8192C" stroke-width="1" stroke-dasharray="2 2"/>
+              <path d="M41 22 L36 30" stroke="#E8192C" stroke-width="1" stroke-dasharray="2 2"/>
+              <path d="M23 42 L28 34" stroke="#E8192C" stroke-width="1" stroke-dasharray="2 2"/>
+              <path d="M41 42 L36 34" stroke="#E8192C" stroke-width="1" stroke-dasharray="2 2"/>
+            </svg>
+          </div>
+          <div class="feature-tag">Comunidad</div>
+          <h3 class="feature-title">Impulsando el<br/>Comercio Cajamarquino</h3>
+          <p class="feature-desc">
+            Cada pedido fortalece la economía local. Trabajamos exclusivamente con negocios de Cajamarca 
+            con comisiones justas y logística premium que las grandes apps no ofrecen.
+          </p>
+          <ul class="feature-list" role="list">
+            <li>✓ Comisiones justas y transparentes</li>
+            <li>✓ Visibilidad para tu negocio local</li>
+            <li>✓ Red de comercios cajamarquinos</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HOW IT WORKS ========== -->
+  <section class="how-it-works" id="how-it-works" aria-label="Cómo funciona SD Delivery">
+    <div class="hiw-bg" aria-hidden="true"></div>
+    <div class="section-container">
+      <div class="section-header" data-reveal>
+        <div class="section-tag">Simple y Rápido</div>
+        <h2 class="section-title">Tu Pedido en <span class="text-accent">3 Pasos</span></h2>
+        <p class="section-subtitle">Pedir con SD Delivery es tan fácil como un mensaje.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card" data-reveal>
+          <div class="step-number">01</div>
+          <div class="step-icon-wrap">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.03 1.18 2 2 0 012 .01h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="step-title">Contáctanos</h3>
+          <p class="step-desc">Escríbenos por WhatsApp o llámanos. Dinos qué quieres pedir y dónde entregarlo.</p>
+        </div>
+
+        <div class="step-connector" aria-hidden="true">
+          <svg width="60" height="20" viewBox="0 0 60 20" fill="none"><path d="M5 10 L55 10" stroke="#E8192C" stroke-width="2" stroke-dasharray="5 3"/><path d="M48 5 L55 10 L48 15" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+
+        <div class="step-card" data-reveal>
+          <div class="step-number">02</div>
+          <div class="step-icon-wrap">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/>
+              <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="step-title">Recogemos tu Pedido</h3>
+          <p class="step-desc">Nuestro repartidor recoge tu pedido y lo asegura en la caja rígida protectora.</p>
+        </div>
+
+        <div class="step-connector" aria-hidden="true">
+          <svg width="60" height="20" viewBox="0 0 60 20" fill="none"><path d="M5 10 L55 10" stroke="#E8192C" stroke-width="2" stroke-dasharray="5 3"/><path d="M48 5 L55 10 L48 15" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+
+        <div class="step-card" data-reveal>
+          <div class="step-number">03</div>
+          <div class="step-icon-wrap">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z" stroke="#E8192C" stroke-width="2"/>
+              <circle cx="12" cy="10" r="3" stroke="#E8192C" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3 class="step-title">Entrega en tu Puerta</h3>
+          <p class="step-desc">Tu pedido llega intacto, caliente y en perfectas condiciones directamente donde estás.</p>
+        </div>
+      </div>
+
+      <div class="hiw-cta" data-reveal>
+        <a href="#order-request" class="btn btn-primary btn-lg" id="hiw-whatsapp-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          Hacer mi Primer Pedido
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== STORES / CATALOG ========== -->
+  <section class="stores-section" id="stores" aria-labelledby="stores-title">
+    <div class="section-container">
+      <div class="section-header" data-reveal>
+        <div class="section-tag">Comercios aliados</div>
+        <h2 class="section-title" id="stores-title">Pide de tus tiendas <span class="text-accent">favoritas</span></h2>
+        <p class="section-subtitle">Elige un local y cuéntanos por WhatsApp qué deseas comprar. SD Delivery coordina la compra y el traslado contigo.</p>
+      </div>
+
+      <div class="stores-tools" data-reveal>
+        <label class="store-search-label" for="store-search">Buscar tienda o restaurante</label>
+        <input class="store-search" id="store-search" type="search" placeholder="Ej. pizza, chifa, supermercado..." autocomplete="off" />
+        <div class="store-filters" role="group" aria-label="Filtrar comercios por categoría">
+          <button class="store-filter active" type="button" data-filter="all" aria-pressed="true">Todos</button>
+          <button class="store-filter" type="button" data-filter="chifa" aria-pressed="false">Chifa</button>
+          <button class="store-filter" type="button" data-filter="pizza" aria-pressed="false">Pizzerías</button>
+          <button class="store-filter" type="button" data-filter="pollos" aria-pressed="false">Pollos y parrillas</button>
+          <button class="store-filter" type="button" data-filter="restaurant" aria-pressed="false">Restaurantes</button>
+          <button class="store-filter" type="button" data-filter="cafe" aria-pressed="false">Cafeterías</button>
+          <button class="store-filter" type="button" data-filter="pharmacy" aria-pressed="false">Farmacias</button>
+          <button class="store-filter" type="button" data-filter="market" aria-pressed="false">Tiendas</button>
+          <button class="store-filter" type="button" data-filter="service" aria-pressed="false">Servicios</button>
+        </div>
+      </div>
+
+      <div class="stores-grid" id="stores-grid"></div>
+      <p class="stores-empty" id="stores-empty" hidden>No encontramos comercios con esa búsqueda. Prueba otra categoría o palabra.</p>
+    </div>
+  </section>
+
+  <!-- ========== ORDER REQUEST ========== -->
+  <section class="order-request-section" id="order-request" aria-labelledby="order-request-title">
+    <div class="section-container">
+      <div class="section-header" data-reveal>
+        <div class="section-tag">Pedido asistido</div>
+        <h2 class="section-title" id="order-request-title">Cuéntanos qué necesitas <span class="text-accent">y dónde</span></h2>
+        <p class="section-subtitle">SD Delivery coordina la compra y el traslado. Revisa el mensaje en WhatsApp y pulsa Enviar para confirmar tu solicitud.</p>
+      </div>
+
+      <div class="order-layout">
+        <form class="order-form" id="order-form">
+          <div class="form-group">
+            <label for="order-store" class="form-label">Tienda o restaurante *</label>
+            <select id="order-store" name="store" class="form-input form-select" required>
+              <option value="" disabled selected>Elige un comercio</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="order-customer-name" class="form-label">Tu nombre *</label>
+              <input type="text" id="order-customer-name" name="customerName" class="form-input" autocomplete="name" required />
+            </div>
+            <div class="form-group">
+              <label for="order-customer-phone" class="form-label">Número de contacto *</label>
+              <input type="tel" id="order-customer-phone" name="customerPhone" class="form-input" placeholder="+51 999 999 999" autocomplete="tel" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="order-items" class="form-label">Productos y cantidades *</label>
+            <textarea id="order-items" name="items" class="form-input form-textarea" placeholder="Ej.: 2 hamburguesas clásicas y 1 bebida" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="order-address" class="form-label">Dirección de entrega y referencia *</label>
+            <input type="text" id="order-address" name="address" class="form-input" placeholder="Calle, número, urbanización y referencia" autocomplete="street-address" required />
+          </div>
+          <div class="form-group">
+            <label for="order-payment" class="form-label">Forma de pago preferida</label>
+            <input type="text" id="order-payment" name="payment" class="form-input" placeholder="Escribe tu preferencia; SD Delivery confirmará disponibilidad" />
+          </div>
+
+          <div class="order-map-heading">
+            <div>
+              <p class="form-label" id="delivery-map-label">Marca el origen del pedido y la entrega</p>
+              <p class="map-help">Selecciona A para ubicar la tienda y B para la dirección del cliente. También puedes mover cada pin.</p>
+            </div>
+            <button type="button" class="btn btn-outline btn-location" id="use-current-location">Usar mi ubicación</button>
+          </div>
+          <div class="map-point-controls" role="group" aria-label="Punto que se marcará en el mapa">
+            <button type="button" class="map-point-btn active" id="select-origin-point" aria-pressed="true">A · Tienda</button>
+            <button type="button" class="map-point-btn" id="select-destination-point" aria-pressed="false">B · Cliente</button>
+          </div>
+          <div id="delivery-map" class="delivery-map" role="application" aria-labelledby="delivery-map-label"></div>
+          <p class="map-status" id="map-status" aria-live="polite">Marca primero la tienda (A) y luego la entrega (B) para estimar la ruta y el tarifario.</p>
+          <p class="route-estimate" id="route-estimate" aria-live="polite">Distancia y tarifa estimada: pendientes de marcar ambos puntos.</p>
+          <p class="map-help map-privacy-note" id="map-privacy-note">El mapa es opcional: si no puedes marcar los puntos, envía el pedido con la dirección escrita y confirma la tarifa por WhatsApp. Mientras no se configure Geoapify, las coordenadas A y B se consultan con el servicio público OSRM basado en OpenStreetMap.</p>
+          <p class="map-help route-provider-attribution" id="route-provider-attribution" hidden>Rutas proporcionadas por <a href="https://www.geoapify.com/" target="_blank" rel="noopener">Geoapify</a>.</p>
+          <a class="map-link" id="google-map-link" href="#" target="_blank" rel="noopener" hidden>Ver entrega en Google Maps</a>
+          <input type="hidden" name="originLatitude" id="order-origin-latitude" />
+          <input type="hidden" name="originLongitude" id="order-origin-longitude" />
+          <input type="hidden" name="latitude" id="order-latitude" />
+          <input type="hidden" name="longitude" id="order-longitude" />
+
+          <div class="form-group order-notes-group">
+            <label for="order-notes" class="form-label">Notas para SD Delivery (opcional)</label>
+            <textarea id="order-notes" name="notes" class="form-input form-textarea" placeholder="Indicaciones adicionales"></textarea>
+          </div>
+          <label class="order-consent">
+            <input type="checkbox" id="order-consent" required />
+            <span>Entiendo que las ubicaciones se usarán para estimar la ruta y que los datos del pedido se incluirán en WhatsApp. Debo pulsar Enviar para confirmar.</span>
+          </label>
+          <button type="submit" class="btn btn-primary btn-full order-submit-btn">Preparar pedido en WhatsApp</button>
+          <p class="order-submit-status" id="order-submit-status" aria-live="polite"></p>
+          <a class="btn btn-outline btn-full order-whatsapp-fallback" id="order-whatsapp-fallback" target="_blank" rel="noopener" hidden>Abrir WhatsApp con el pedido</a>
+        </form>
+
+        <aside class="order-info-card" data-reveal-right>
+          <h3>Antes de confirmar</h3>
+          <p id="delivery-info-summary">Revisa nuestros horarios, cobertura y medios de pago antes de enviar tu pedido.</p>
+          <div class="order-info-row"><strong>Horario de atención</strong><span>Todos los días, de 6:00 a. m. a 11:59 p. m.</span></div>
+          <div class="order-info-row"><strong>Zonas de servicio</strong><span>Cajamarca, Baños del Inca, Llacanora, Jesús y Porconcillo. Para otras zonas cercanas, consulta disponibilidad según el horario.</span></div>
+          <div class="order-info-row"><strong>Tarifario por distancia</strong><ul class="delivery-rate-list"><li>Hasta 2 km: <b>S/ 5</b></li><li>De 2.1 a 3 km: <b>S/ 6</b></li><li>Más de 3 km: <b>S/ 2 por kilómetro</b></li></ul><span>El costo final puede variar según el servicio requerido y se confirma antes de realizar la compra.</span></div>
+          <div class="order-info-row"><strong>Medios de pago</strong><span>Efectivo, billeteras digitales (Yape, Plin y Lemon) y tarjetas de débito o crédito. Contamos con POS; el pago con tarjeta puede tener un recargo.</span></div>
+          <div class="order-info-row"><strong>WhatsApp SD Delivery</strong><a href="https://wa.me/51957107660" target="_blank" rel="noopener">+51 957 107 660</a></div>
+          <p class="order-info-note">La página no guarda tus datos. Se abrirá WhatsApp con el pedido preparado para que lo revises y lo envíes.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PARTNERS / B2B ========== -->
+  <section class="partners" id="partners" aria-label="Alianzas comerciales para negocios">
+    <div class="section-container">
+      <div class="partners-inner">
+        <div class="partners-content" data-reveal>
+          <div class="section-tag">Para Comercios</div>
+          <h2 class="section-title">¿Tienes un Negocio en <span class="text-accent">Cajamarca</span>?</h2>
+          <p class="section-subtitle" style="text-align:left;">
+            Únete a nuestra red de comercios aliados y multiplica tus ventas. 
+            Ofrecemos la infraestructura logística que tu negocio necesita con condiciones que las grandes apps no pueden igualar.
+          </p>
+
+          <div class="benefits-list">
+            <div class="benefit-item">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#E8192C" stroke-width="2" fill="#E8192C" fill-opacity="0.2"/></svg>
+              </div>
+              <div>
+                <strong>Comisiones Justas y Transparentes</strong>
+                <p>Sin sorpresas ni tarifas ocultas. Modelos flexibles que se adaptan a tu negocio.</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="#E8192C" stroke-width="2" fill="#E8192C" fill-opacity="0.2"/></svg>
+              </div>
+              <div>
+                <strong>Logística Premium desde el Día 1</strong>
+                <p>Repartidores profesionales con cajas rígidas. Tus productos llegan perfectos.</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="#E8192C" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="#E8192C" stroke-width="2" fill="#E8192C" fill-opacity="0.2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="#E8192C" stroke-width="2"/></svg>
+              </div>
+              <div>
+                <strong>Acceso a Clientes de Cajamarca</strong>
+                <p>Visibilidad real entre los consumidores locales que buscan apoyar el comercio cajamarquino.</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" stroke="#E8192C" stroke-width="2" fill="#E8192C" fill-opacity="0.2"/><path d="M8 21h8M12 17v4" stroke="#E8192C" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+              <div>
+                <strong>Coordinación de pedidos</strong>
+                <p>Coordinamos contigo los pedidos, horarios y detalles de entrega por WhatsApp.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="partners-form-wrap" data-reveal-right>
+          <div class="partners-form-card">
+            <div class="form-card-header">
+              <h3>Registra tu Negocio</h3>
+              <p>Completa el formulario y coordinamos contigo por WhatsApp.</p>
+            </div>
+            <form class="partner-form" id="partner-form" novalidate>
+              <div class="form-group">
+                <label for="business-name" class="form-label">Nombre del Negocio *</label>
+                <input type="text" id="business-name" name="businessName" class="form-input" placeholder="Ej: Restaurante El Cajón" required autocomplete="organization"/>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contact-name" class="form-label">Tu Nombre *</label>
+                  <input type="text" id="contact-name" name="contactName" class="form-input" placeholder="Nombre completo" required autocomplete="name"/>
+                </div>
+                <div class="form-group">
+                  <label for="phone" class="form-label">WhatsApp *</label>
+                  <input type="tel" id="phone" name="phone" class="form-input" placeholder="+51 957 107 660" required autocomplete="tel"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="business-type" class="form-label">Tipo de Negocio</label>
+                <select id="business-type" name="businessType" class="form-input form-select">
+                  <option value="" disabled selected>Selecciona tu categoría</option>
+                  <option value="restaurant">Restaurante / Cafetería</option>
+                  <option value="grocery">Bodega / Minimarket</option>
+                  <option value="pharmacy">Farmacia</option>
+                  <option value="bakery">Panadería / Pastelería</option>
+                  <option value="other">Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="message" class="form-label">Cuéntanos más (opcional)</label>
+                <textarea id="message" name="message" class="form-input form-textarea" placeholder="Horario de atención, dirección, número de pedidos diarios..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-full" id="submit-partner-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Quiero Asociarme
+              </button>
+              <p class="order-submit-status" id="partner-submit-status" aria-live="polite"></p>
+              <a class="btn btn-outline btn-full order-whatsapp-fallback" id="partner-whatsapp-fallback" target="_blank" rel="noopener" hidden>Abrir WhatsApp con la solicitud</a>
+              <p class="form-disclaimer">Al continuar, se abrirá WhatsApp con la información que escribas. Revisa el mensaje antes de enviarlo.</p>
+            </form>
+            <div class="form-success" id="form-success" aria-live="polite" hidden>
+              <div class="success-icon">✓</div>
+              <h4>Continúa en WhatsApp</h4>
+              <p>Tu mensaje está listo. Pulsa Enviar en WhatsApp para completar la solicitud.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TESTIMONIALS ========== -->
+  <section class="testimonials" aria-label="Nuestro compromiso">
+    <div class="section-container">
+      <div class="section-header" data-reveal>
+        <div class="section-tag">Nuestro compromiso</div>
+        <h2 class="section-title">Cada pedido merece <span class="text-accent">cuidado</span></h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card" data-reveal>
+          <div class="testimonial-stars" aria-hidden="true">01</div>
+          <p class="testimonial-text">Transportamos tus pedidos con cajas rígidas para ayudar a que lleguen en buenas condiciones.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" aria-hidden="true">MR</div>
+            <div>
+              <div class="author-name">Protección</div>
+              <div class="author-loc">Un viaje más seguro</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card" data-reveal>
+          <div class="testimonial-stars" aria-hidden="true">02</div>
+          <p class="testimonial-text">Coordinamos contigo de forma directa para resolver dudas y mantenerte al tanto de tu pedido.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" aria-hidden="true">JC</div>
+            <div>
+              <div class="author-name">Atención humana</div>
+              <div class="author-loc">Estamos para ayudarte</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card testimonial-card--featured" data-reveal>
+          <div class="testimonial-stars" aria-hidden="true">03</div>
+          <p class="testimonial-text">Trabajamos junto a negocios locales para acercar sus productos a más personas en Cajamarca.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" aria-hidden="true">LP</div>
+            <div>
+              <div class="author-name">Comercio local</div>
+              <div class="author-loc">Creciendo juntos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA BANNER ========== -->
+  <section class="cta-banner" id="order" aria-label="Llamada a la acción principal">
+    <div class="cta-banner-bg" aria-hidden="true"></div>
+    <div class="section-container">
+      <div class="cta-content" data-reveal>
+        <h2 class="cta-title">¿Listo para tu Primer<br/><span class="text-accent">Pedido Perfecto</span>?</h2>
+        <p class="cta-subtitle">Consulta cobertura, horario y tarifa. Coordinamos tu pedido directamente por WhatsApp.</p>
+        <div class="cta-buttons">
+          <a href="#order-request" class="btn btn-primary btn-lg" id="cta-order-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            Completar mi pedido
+          </a>
+          <a href="tel:+51957107660" class="btn btn-ghost btn-lg" id="cta-call-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.03 1.18 2 2 0 012 .01h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/></svg>
+            Llamar Ahora
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer" id="contact" role="contentinfo">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="#home" class="nav-logo footer-logo" aria-label="SD Delivery inicio">
+            <img class="brand-logo-image" src="assets/sd-delivery-logo.png" alt="SD Delivery — Servimovil Dominick" />
+          </a>
+          <p class="footer-tagline">Servicio local de delivery en Cajamarca.<br/>Atención cercana y entregas coordinadas.</p>
+          <div class="footer-socials">
+            <a href="https://web.facebook.com/profile.php?id=61596182855868" class="social-link" aria-label="Facebook SD Delivery" target="_blank" rel="noopener">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/sddeliverycajamarca/" class="social-link" aria-label="Instagram SD Delivery" target="_blank" rel="noopener">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="https://wa.me/51957107660" class="social-link" aria-label="WhatsApp SD Delivery" target="_blank" rel="noopener">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@sddelivery_cajamarca" class="social-link" aria-label="TikTok SD Delivery" target="_blank" rel="noopener">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.03a8.16 8.16 0 004.78 1.52V7.1a4.85 4.85 0 01-1.01-.41z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-links-group">
+          <h4 class="footer-links-title">Empresa</h4>
+          <ul role="list">
+            <li><a href="#why-us" class="footer-link">¿Por qué SD Delivery?</a></li>
+            <li><a href="#stores" class="footer-link">Tiendas y restaurantes</a></li>
+            <li><a href="#how-it-works" class="footer-link">Cómo Funciona</a></li>
+            <li><a href="#partners" class="footer-link">Comercios Aliados</a></li>
+            <li><a href="#" class="footer-link">Sobre Nosotros</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-group">
+          <h4 class="footer-links-title">Clientes</h4>
+          <ul role="list">
+            <li><a href="#order-request" class="footer-link">Hacer un Pedido</a></li>
+            <li><a href="#" class="footer-link">Seguimiento de Pedido</a></li>
+            <li><a href="#" class="footer-link">Preguntas Frecuentes</a></li>
+            <li><a href="#" class="footer-link">Soporte</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-group">
+          <h4 class="footer-links-title">Contacto</h4>
+          <ul role="list">
+            <li class="footer-contact-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8192C" stroke-width="2" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Jirón Chepén 1142, Urb. La Perlita, Cajamarca</span>
+            </li>
+            <li class="footer-contact-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8192C" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.03 1.18 2 2 0 012 .01h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/></svg>
+              <a href="tel:+51957107660" class="footer-link">+51 957 107 660</a>
+            </li>
+            <li class="footer-contact-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8192C" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <a href="https://wa.me/51957107660" class="footer-link">Contáctanos por WhatsApp</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 SD Delivery. Todos los derechos reservados. Hecho con ❤️ en Cajamarca, Perú.</p>
+        <div class="footer-legal">
+          <a href="legal.html#privacy" class="footer-legal-link">Política de Privacidad</a>
+          <span aria-hidden="true">·</span>
+          <a href="legal.html#terms" class="footer-legal-link">Términos de Servicio</a>
+          <span aria-hidden="true">·</span>
+          <a href="legal.html#cookies" class="footer-legal-link">Cookies</a>
+          <span aria-hidden="true">·</span>
+          <a href="legal.html#complaints" class="footer-legal-link">Libro de Reclamaciones</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/51957107660?text=Hola%2C%20quiero%20hacer%20un%20pedido%20con%20SD%20Delivery" 
+     target="_blank" rel="noopener"
+     class="whatsapp-float" 
+     id="whatsapp-float-btn"
+     aria-label="Contactar por WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    <span class="whatsapp-tooltip">¡Pide aquí!</span>
+  </a>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="site-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
