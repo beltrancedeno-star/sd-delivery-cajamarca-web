@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#09090b" />
+  <meta name="description" content="Panel privado de seguimiento de turnos de SD Delivery." />
+  <title>Panel de repartidores | SD Delivery</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="tracking.css" />
+</head>
+<body class="tracking-page admin-page">
+  <header class="tracking-header">
+    <a class="tracking-brand" href="index.html" aria-label="SD Delivery, volver al inicio">
+      <img src="assets/sd-delivery-logo.png" alt="SD Delivery" />
+      <span>Panel de repartidores</span>
+    </a>
+    <a class="tracking-back" href="index.html">Volver al sitio</a>
+  </header>
+
+  <section class="admin-lock" id="admin-lock" aria-labelledby="admin-lock-title">
+    <div class="admin-lock-card">
+      <p class="tracking-eyebrow">Acceso de administración</p>
+      <h1 class="tracking-title" id="admin-lock-title">Control de repartidores</h1>
+      <p class="tracking-description">Ingresa el PIN para abrir el panel de seguimiento.</p>
+      <form class="tracking-form" id="admin-pin-form">
+        <label class="tracking-field" for="admin-pin">
+          PIN
+          <input id="admin-pin" name="pin" type="password" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{4,8}" maxlength="8" required />
+        </label>
+        <button class="tracking-button" type="submit">Abrir panel</button>
+      </form>
+      <p class="tracking-message" id="admin-lock-message" role="status" aria-live="polite"></p>
+      <p class="admin-privacy-note">El PIN oculta el panel en esta sesión. Firebase limita el acceso real a los datos mediante sus reglas de seguridad.</p>
+    </div>
+  </section>
+
+  <main class="admin-dashboard" id="admin-dashboard" hidden>
+    <header class="admin-topbar">
+      <h1 class="admin-heading">Repartidores en Cajamarca</h1>
+      <div class="admin-topbar-actions">
+        <p class="admin-status" id="admin-status" role="status" aria-live="polite">Conectando…</p>
+        <button class="admin-lock-button" id="admin-lock-button" type="button">Bloquear panel</button>
+      </div>
+    </header>
+
+    <section class="admin-stats" aria-label="Resumen de turnos">
+      <article class="admin-stat">
+        <span class="admin-stat-label">Total Drivers Activos Hoy</span>
+        <strong class="admin-stat-value" id="count-today">0</strong>
+      </article>
+      <article class="admin-stat">
+        <span class="admin-stat-label">Disponibles</span>
+        <strong class="admin-stat-value available" id="count-available">0</strong>
+      </article>
+      <article class="admin-stat">
+        <span class="admin-stat-label">En Reparto</span>
+        <strong class="admin-stat-value delivery" id="count-delivery">0</strong>
+      </article>
+    </section>
+
+    <section class="admin-uid-card" id="admin-uid-card" hidden aria-label="Configuración de acceso administrador">
+      <div class="admin-uid-copy">
+        <strong>UID de esta sesión:</strong>
+        <code class="admin-uid-code" id="admin-uid"></code>
+      </div>
+      <button class="admin-copy-button" id="copy-admin-uid" type="button">Copiar UID</button>
+      <button class="admin-copy-button" id="retry-admin-read" type="button">Reintentar lectura</button>
+      <p class="admin-uid-help">Para autorizar este panel, agrega en Firebase Realtime Database el valor <code>true</code> en <code>admins/&lt;UID&gt;</code> y vuelve a intentar.</p>
+    </section>
+
+    <div class="admin-workspace">
+      <div id="live-map" role="application" aria-label="Mapa en vivo de repartidores"></div>
+      <aside class="driver-list-panel" aria-labelledby="driver-list-title">
+        <h2 class="driver-list-title" id="driver-list-title">Conectados ahora</h2>
+        <ul class="driver-list" id="driver-list">
+          <li class="driver-list-empty">Esperando conexión con Firebase…</li>
+        </ul>
+      </aside>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

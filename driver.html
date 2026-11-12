@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#09090b" />
+  <meta name="description" content="Registro de turno y ubicación GPS para repartidores de SD Delivery." />
+  <title>Turno de repartidor | SD Delivery</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="tracking.css" />
+</head>
+<body class="tracking-page">
+  <header class="tracking-header">
+    <a class="tracking-brand" href="index.html" aria-label="SD Delivery, volver al inicio">
+      <img src="assets/sd-delivery-logo.png" alt="SD Delivery" />
+      <span>Turno de repartidor</span>
+    </a>
+    <a class="tracking-back" href="index.html">Volver al sitio</a>
+  </header>
+
+  <main class="tracking-main">
+    <section class="tracking-card" aria-labelledby="driver-title">
+      <p class="tracking-eyebrow">Panel del repartidor</p>
+      <h1 class="tracking-title" id="driver-title">Inicia tu turno</h1>
+      <p class="tracking-description">Completa tus datos y activa el GPS al comenzar. Puedes finalizar el turno cuando termines.</p>
+
+      <div class="tracking-note">
+        Al iniciar, SD Delivery podrá ver tu ubicación mientras el turno esté activo. Al finalizar o cerrar la pestaña, se detiene el seguimiento y se borra la última ubicación del mapa.
+      </div>
+
+      <form class="tracking-form" id="driver-form">
+        <label class="tracking-field" for="driver-name">
+          Nombre completo
+          <input id="driver-name" name="name" type="text" autocomplete="name" maxlength="100" required />
+        </label>
+
+        <label class="tracking-field" for="driver-plate">
+          Placa de moto
+          <input id="driver-plate" name="plate" type="text" autocomplete="off" maxlength="20" required />
+        </label>
+
+        <label class="tracking-field" for="driver-phone">
+          Número de WhatsApp
+          <input id="driver-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" required />
+        </label>
+
+        <label class="tracking-field" for="driver-state">
+          Estado
+          <select id="driver-state" name="state" required>
+            <option value="Disponible">Disponible</option>
+            <option value="En reparto">En reparto</option>
+            <option value="En pausa">En pausa</option>
+          </select>
+        </label>
+
+        <button class="tracking-button" id="driver-toggle" type="submit">Iniciar Turno y Activar GPS</button>
+      </form>
+
+      <div class="gps-live" id="gps-live" role="status" aria-live="polite" hidden>
+        <span class="gps-pulse" aria-hidden="true"></span>
+        <span>GPS Transmitiendo en Vivo</span>
+      </div>
+      <p class="gps-coordinates" id="gps-coordinates">Coordenadas: esperando inicio de turno</p>
+      <p class="tracking-message" id="driver-message" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script type="module" src="driver.js"></script>
+</body>
+</html>

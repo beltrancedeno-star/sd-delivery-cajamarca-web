@@ -58,3 +58,11 @@ Precios revisados el 11 de noviembre de 2026; pueden variar y no incluyen impues
 Recomendación preliminar: Supabase Pro para el registro sensible de reclamos por su autenticación y copias integradas; Geoapify gratuito solo después de obtener confirmación escrita de uso comercial y probar las rutas. No se configuró una cuenta/clave de Geoapify ni se enviaron datos del titular a servicios externos durante esta revisión.
 
 La integración de rutas ya admite Geoapify de forma opcional. Para probarla, registrar el proyecto Geoapify, limitar la clave a la API de Routing y al dominio publicado, obtener confirmación de los términos comerciales y colocar la clave pública restringida en `site-config.js`. Si la clave está vacía, la página conserva OSRM como antes. El nivel gratuito no se activa hasta completar esos pasos; no pegar claves privadas en el código.
+
+## Seguimiento GPS de repartidores
+
+`driver.html` solicita ubicación solo cuando el repartidor inicia su turno y requiere HTTPS. Finalizar el turno o cerrar la pestaña marca el registro inactivo y elimina la última coordenada. `admin.html` usa el PIN inicial `2026` (cambiable en `admin.js`) como bloqueo de pantalla; la autorización real de lectura depende de Firebase Authentication y `database.rules.json`.
+
+El proyecto `sddelivery` ya tiene registrada la app web, Realtime Database en `us-central1`, Authentication anónima habilitada, y las reglas de `database.rules.json` publicadas. `firebase-config.js` contiene la configuración de esa app; `sddelivery.online` está agregado como dominio autorizado.
+
+Para autorizar el panel de producción, publicar `admin.html`, abrirlo en `https://sddelivery.online`, ingresar el PIN y copiar el UID que aparece. En Firebase Console > Realtime Database > Datos, agregar `admins/<UID>` con valor booleano `true`. El UID de `localhost` es distinto del de `sddelivery.online`; autoriza el que muestra el panel en el dominio publicado. No habilitar escrituras públicas ni permitir que clientes modifiquen `admins`.
