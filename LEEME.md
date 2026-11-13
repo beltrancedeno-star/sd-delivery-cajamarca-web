@@ -10,7 +10,7 @@ Para sumar o actualizar un aliado, agrega su logo a `assets/stores/` y una entra
 
 ### Cartas y catálogos
 
-SD Delivery administra la publicación: por cada comercio, coloca sus archivos en `assets/menus/<nombre-del-comercio>/` y agrega `menu: { pdf: 'carta.pdf', url: 'https://...', images: ['pagina-1.jpg', 'pagina-2.jpg'] }` en su entrada de `app.js`. El nombre de la carpeta se genera desde el nombre del comercio en minúsculas, sin tildes y con guiones (por ejemplo, `300 Burger` → `300-burger`). Se admiten archivos PDF, enlaces externos HTTPS y varias imágenes JPG, PNG o WebP; las tarjetas muestran enlaces solo para los formatos configurados. No hay un panel de carga en la web: esta versión estática requiere copiar los archivos al proyecto y volver a publicar el sitio. Kofetin y Fogón Dorado tienen cartas PDF; KFC, Pizza Hut y Bembos enlazan a sus cartas oficiales.
+SD Delivery administra la publicación: por cada comercio, coloca sus archivos en `assets/menus/<nombre-del-comercio>/` y agrega `menu: { pdf: 'carta.pdf', url: 'https://...', images: ['pagina-1.jpg', 'pagina-2.jpg'] }` en su entrada de `app.js`. El nombre de la carpeta se genera desde el nombre del comercio en minúsculas, sin tildes y con guiones (por ejemplo, `300 Burger` → `300-burger`). Se admiten archivos PDF, enlaces externos HTTPS y varias imágenes JPG, PNG o WebP; las tarjetas muestran enlaces solo para los formatos configurados. No hay un panel de carga en la web: esta versión estática requiere copiar los archivos al proyecto y volver a publicar el sitio. La Chola, Kofetin y Fogón Dorado tienen cartas PDF; KFC, Pizza Hut y Bembos enlazan a sus cartas oficiales.
 
 ## Contacto y operación
 
