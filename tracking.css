@@ -350,10 +350,31 @@ body.tracking-page {
 .driver-row-name { font-weight: 800; }
 .driver-row-plate,
 .driver-row-signal { color: var(--tracking-muted); font-size: 0.8rem; }
+.driver-row-connection { margin: 6px 0 0; font-size: 0.8rem; font-weight: 700; }
+.driver-row-connection[data-active="true"] { color: var(--tracking-green); }
+.driver-row-connection[data-active="false"] { color: var(--tracking-muted); }
 .driver-row-state { margin: 6px 0; font-size: 0.82rem; font-weight: 700; }
 .driver-row-state[data-state="Disponible"] { color: var(--tracking-green); }
 .driver-row-state[data-state="En reparto"] { color: var(--tracking-orange); }
 .driver-row-state[data-state="En pausa"] { color: #fda4af; }
+
+.driver-status-button {
+  min-height: 40px;
+  margin-top: 10px;
+  border: 1px solid var(--tracking-border);
+  border-radius: 9px;
+  color: #f4f4f5;
+  background: #1b1b20;
+  padding: 8px 11px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.driver-status-button[data-next-state="En reparto"] { border-color: rgba(249, 115, 22, 0.65); }
+.driver-status-button[data-next-state="Disponible"] { border-color: rgba(34, 197, 94, 0.65); }
+.driver-status-button:disabled { cursor: wait; opacity: 0.6; }
 
 .driver-whatsapp {
   display: inline-flex;

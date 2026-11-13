@@ -1,5 +1,5 @@
 import { onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { onValue, ref } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+import { onValue, ref, set } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
 import { auth, db, firebaseConfigured, missingFirebaseFields } from './firebase-config.js';
 
 const ADMIN_PIN = '2026';
@@ -88,7 +88,7 @@ const renderDriverList = drivers => {
   if (!drivers.length) {
     const empty = document.createElement('li');
     empty.className = 'driver-list-empty';
-    empty.textContent = 'No hay repartidores conectados en este momento.';
+    empty.textContent = 'Aún no hay repartidores registrados.';
     driverList.append(empty);
     return;
   }
@@ -96,8 +96,10 @@ const renderDriverList = drivers => {
   drivers.forEach(({ id, data }) => {
     const row = document.createElement('li');
     row.className = 'driver-row';
+    const isActive = data.activo === true;
     const ageSeconds = (Date.now() - Number(data.ultimaActualizacion || 0)) / 1000;
     row.dataset.stale = String(!Number.isFinite(ageSeconds) || ageSeconds > 120);
+    row.dataset.active = String(isActive);
 
     const heading = document.createElement('div');
     heading.className = 'driver-row-heading';
@@ -109,6 +111,11 @@ const renderDriverList = drivers => {
     plate.textContent = data.placa || 'Sin placa';
     heading.append(name, plate);
 
+    const connection = document.createElement('p');
+    connection.className = 'driver-row-connection';
+    connection.dataset.active = String(isActive);
+    connection.textContent = isActive ? 'Turno activo' : 'Fuera de turno';
+
     const state = document.createElement('p');
     state.className = 'driver-row-state';
     state.dataset.state = data.estado || '';
@@ -117,7 +124,7 @@ const renderDriverList = drivers => {
     const signal = document.createElement('p');
     signal.className = 'driver-row-signal';
     signal.textContent = `Última señal ${signalAge(data.ultimaActualizacion)}`;
-    row.append(heading, state, signal);
+    row.append(heading, connection, state, signal);
 
     const phone = String(data.telefono || '').replace(/\D/g, '');
     if (phone.length >= 7 && phone.length <= 15) {
@@ -131,13 +138,37 @@ const renderDriverList = drivers => {
       row.append(contact);
     }
 
+    if (isActive) {
+      const nextState = data.estado === 'En reparto' ? 'Disponible' : 'En reparto';
+      const statusButton = document.createElement('button');
+      statusButton.className = 'driver-status-button';
+      statusButton.dataset.nextState = nextState;
+      statusButton.type = 'button';
+      statusButton.textContent = nextState === 'En reparto' ? 'Marcar ocupado' : 'Liberar repartidor';
+      statusButton.setAttribute('aria-label', `${statusButton.textContent}: ${data.nombre || 'repartidor'}`);
+      statusButton.addEventListener('click', async () => {
+        statusButton.disabled = true;
+        try {
+          await set(ref(db, `drivers/${id}/estado`), nextState);
+          setAdminStatus(`${data.nombre || 'El repartidor'} ahora está ${nextState.toLowerCase()}.`, 'success');
+        } catch (error) {
+          console.error(`No se pudo cambiar el estado de ${data.nombre || id}:`, error);
+          setAdminStatus('No se pudo cambiar el estado. Comprueba los permisos y la conexión.', 'error');
+          statusButton.disabled = false;
+        }
+      });
+      row.append(statusButton);
+    }
+
     driverList.append(row);
   });
 };
 
 const renderDrivers = snapshot => {
   const records = snapshot.val() || {};
-  const entries = Object.entries(records).map(([id, data]) => ({ id, data: data || {} }));
+  const entries = Object.entries(records)
+    .map(([id, data]) => ({ id, data: data || {} }))
+    .filter(({ data }) => typeof data.nombre === 'string' && typeof data.placa === 'string');
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
   const active = entries.filter(({ data }) => data.activo === true);
@@ -149,7 +180,7 @@ const renderDrivers = snapshot => {
   document.getElementById('count-available').textContent = String(availableCount);
   document.getElementById('count-delivery').textContent = String(deliveryCount);
 
-  const located = active.filter(({ data }) => Number.isFinite(Number(data.lat)) && Number.isFinite(Number(data.lng)));
+  const located = active.filter(({ data }) => Number.isFinite(data.lat) && Number.isFinite(data.lng));
   const visibleIds = new Set(located.map(({ id }) => id));
   markers.forEach((marker, id) => {
     if (!visibleIds.has(id)) {
@@ -170,7 +201,7 @@ const renderDrivers = snapshot => {
     marker.bindPopup(makePopup(data));
   });
 
-  renderDriverList(active.sort((left, right) => String(left.data.nombre || '').localeCompare(String(right.data.nombre || ''), 'es')));
+  renderDriverList(entries.sort((left, right) => String(left.data.nombre || '').localeCompare(String(right.data.nombre || ''), 'es')));
 };
 
 const listenForDrivers = () => {

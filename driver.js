@@ -1,5 +1,5 @@
 import { onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { onDisconnect, ref, serverTimestamp, set, update } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+import { onDisconnect, onValue, ref, serverTimestamp, set, update } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
 import { auth, db, firebaseConfigured, missingFirebaseFields } from './firebase-config.js';
 
 const form = document.getElementById('driver-form');
@@ -13,6 +13,7 @@ let shiftActive = false;
 let driverRef = null;
 let watchId = null;
 let wakeLock = null;
+let stopStateListener = null;
 
 const setMessage = (text, kind = 'info') => {
   message.textContent = text;
@@ -74,6 +75,10 @@ const endShift = async (reason = 'Turno finalizado.', kind = 'success') => {
     navigator.geolocation.clearWatch(watchId);
     watchId = null;
   }
+  if (stopStateListener) {
+    stopStateListener();
+    stopStateListener = null;
+  }
   await releaseWakeLock();
 
   try {
@@ -105,7 +110,6 @@ const handlePosition = async position => {
     await update(driverRef, {
       lat: latitude,
       lng: longitude,
-      estado: stateInput.value,
       ultimaActualizacion: serverTimestamp()
     });
     setMessage('Ubicación actualizada correctamente.', 'success');
@@ -166,12 +170,20 @@ const startShift = async () => {
       ultimaActualizacion: serverTimestamp()
     };
 
-    await set(driverRef, record);
     await onDisconnect(driverRef).update({
       activo: false,
       lat: null,
       lng: null,
       ultimaActualizacion: serverTimestamp()
+    });
+    await set(driverRef, record);
+    stopStateListener = onValue(ref(db, `drivers/${user.uid}/estado`), snapshot => {
+      const status = snapshot.val();
+      if (['Disponible', 'En reparto', 'En pausa'].includes(status)) {
+        stateInput.value = status;
+      }
+    }, error => {
+      console.error('No se pudo sincronizar el estado del repartidor:', error);
     });
 
     shiftActive = true;
@@ -200,6 +212,10 @@ const startShift = async () => {
     }
     driverRef = null;
     shiftActive = false;
+    if (stopStateListener) {
+      stopStateListener();
+      stopStateListener = null;
+    }
     toggleButton.textContent = 'Iniciar Turno y Activar GPS';
     toggleButton.disabled = false;
     setMessage('No se pudo iniciar. Comprueba Firebase, el permiso GPS y la conexión.', 'error');

@@ -22,6 +22,7 @@
           ".validate": "newData.isString() && newData.val().length >= 7 && newData.val().length <= 20"
         },
         "estado": {
+          ".write": "auth != null && (auth.uid === $driverId || root.child('admins').child(auth.uid).val() === true)",
           ".validate": "newData.val() === 'Disponible' || newData.val() === 'En reparto' || newData.val() === 'En pausa'"
         },
         "activo": {
