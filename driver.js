@@ -131,7 +131,7 @@ const startShift = async () => {
   }
 
   if (!window.isSecureContext) {
-    setMessage('El GPS solo funciona en HTTPS. Espera a que el certificado de sddelivery.online esté activo.', 'error');
+    setMessage('No se pudo abrir la versión segura. Entra por https://sddelivery.online/driver para activar el GPS.', 'error');
     return;
   }
 

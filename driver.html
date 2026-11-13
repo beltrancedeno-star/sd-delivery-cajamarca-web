@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#09090b" />
   <meta name="description" content="Registro de turno y ubicación GPS para repartidores de SD Delivery." />
+  <script>
+    if (location.protocol !== 'https:' && ['sddelivery.online', 'www.sddelivery.online'].includes(location.hostname)) {
+      location.replace(`https://${location.host}${location.pathname}${location.search}${location.hash}`);
+    }
+  </script>
   <title>Turno de repartidor | SD Delivery</title>
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="stylesheet" href="style.css" />
