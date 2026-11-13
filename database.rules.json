@@ -44,6 +44,66 @@
           ".validate": false
         }
       }
+    },
+    "orders": {
+      ".read": "auth != null && (root.child('admins').child(auth.uid).val() === true || (query.orderByChild === 'driverUid' && query.equalTo === auth.uid))",
+      ".indexOn": ["driverUid"],
+      "$orderId": {
+        ".read": "auth != null && (root.child('admins').child(auth.uid).val() === true || data.child('driverUid').val() === auth.uid)",
+        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+        ".validate": "newData.hasChildren(['store', 'customerName', 'phone', 'items', 'address', 'payment', 'fare', 'notes', 'status', 'driverUid', 'driverName', 'createdAt', 'updatedAt', 'createdBy'])",
+        "store": {
+          ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 80"
+        },
+        "customerName": {
+          ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 100"
+        },
+        "phone": {
+          ".validate": "newData.isString() && newData.val().length >= 7 && newData.val().length <= 20"
+        },
+        "items": {
+          ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 1000"
+        },
+        "address": {
+          ".validate": "newData.isString() && newData.val().length >= 4 && newData.val().length <= 300"
+        },
+        "payment": {
+          ".validate": "newData.isString() && newData.val().length <= 80"
+        },
+        "fare": {
+          ".validate": "newData.isString() && newData.val().length <= 20"
+        },
+        "notes": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "status": {
+          ".write": "auth != null && (root.child('admins').child(auth.uid).val() === true || (data.parent().child('driverUid').val() === auth.uid && ((data.val() === 'Asignado' && (newData.val() === 'En reparto' || newData.val() === 'Rechazado')) || (data.val() === 'En reparto' && newData.val() === 'Entregado'))))",
+          ".validate": "newData.val() === 'Pendiente' || newData.val() === 'Asignado' || newData.val() === 'En reparto' || newData.val() === 'Entregado' || newData.val() === 'Rechazado' || newData.val() === 'Cancelado'"
+        },
+        "driverUid": {
+          ".write": "auth != null && (root.child('admins').child(auth.uid).val() === true || (data.val() === auth.uid && newData.val() === '' && ((data.parent().child('status').val() === 'Asignado' && newData.parent().child('status').val() === 'Rechazado') || (data.parent().child('status').val() === 'En reparto' && newData.parent().child('status').val() === 'Entregado'))))",
+          ".validate": "newData.isString() && newData.val().length <= 128"
+        },
+        "driverName": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "assignedAt": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "updatedAt": {
+          ".write": "auth != null && (root.child('admins').child(auth.uid).val() === true || data.parent().child('driverUid').val() === auth.uid)",
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "createdBy": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 128"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
     }
   }
 }

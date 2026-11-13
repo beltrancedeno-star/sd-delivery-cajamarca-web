@@ -62,6 +62,12 @@
         <button class="tracking-button" id="driver-toggle" type="submit">Iniciar Turno y Activar GPS</button>
       </form>
 
+      <section class="driver-orders-panel" id="driver-orders-panel" aria-labelledby="driver-orders-title" hidden>
+        <h2 class="driver-orders-title" id="driver-orders-title">Pedidos asignados</h2>
+        <p class="tracking-description">Usa los datos del cliente solo para completar la entrega.</p>
+        <ul class="driver-order-list" id="driver-order-list" aria-live="polite"></ul>
+      </section>
+
       <div class="gps-live" id="gps-live" role="status" aria-live="polite" hidden>
         <span class="gps-pulse" aria-hidden="true"></span>
         <span>GPS Transmitiendo en Vivo</span>

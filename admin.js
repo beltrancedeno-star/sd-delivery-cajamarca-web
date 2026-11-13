@@ -1,5 +1,5 @@
 import { onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { onValue, ref, set } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+import { onValue, push, ref, serverTimestamp, set, update } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
 import { auth, db, firebaseConfigured, missingFirebaseFields } from './firebase-config.js';
 
 const ADMIN_PIN = '2026';
@@ -12,10 +12,21 @@ const adminStatus = document.getElementById('admin-status');
 const uidCard = document.getElementById('admin-uid-card');
 const uidText = document.getElementById('admin-uid');
 const driverList = document.getElementById('driver-list');
+const driverWorkspace = document.querySelector('.admin-workspace');
+const ordersWorkspace = document.getElementById('admin-orders-workspace');
+const orderForm = document.getElementById('admin-order-form');
+const orderMessage = document.getElementById('admin-order-message');
+const orderDriverInput = document.getElementById('order-driver');
+const orderList = document.getElementById('admin-order-list');
 const markers = new Map();
+const ACTIVE_ORDER_STATES = new Set(['Asignado', 'En reparto']);
 let map = null;
 let stopDriverListener = null;
+let stopOrderListener = null;
 let adminUid = null;
+let driverSnapshot = null;
+let driverRecords = {};
+let orderRecords = {};
 
 const setLockMessage = (text, kind = 'error') => {
   lockMessage.textContent = text;
@@ -25,6 +36,33 @@ const setLockMessage = (text, kind = 'error') => {
 const setAdminStatus = (text, kind = 'info') => {
   adminStatus.textContent = text;
   adminStatus.dataset.kind = kind;
+};
+
+const setOrderMessage = (text, kind = 'info') => {
+  orderMessage.textContent = text;
+  orderMessage.dataset.kind = kind;
+};
+
+const hasActiveOrder = driverId => Object.values(orderRecords).some(order =>
+  order && order.driverUid === driverId && ACTIVE_ORDER_STATES.has(order.status)
+);
+
+const getAvailableDrivers = () => Object.entries(driverRecords)
+  .filter(([id, driver]) => driver
+    && driver.activo === true
+    && driver.estado === 'Disponible'
+    && !hasActiveOrder(id))
+  .sort((left, right) => String(left[1].nombre || '').localeCompare(String(right[1].nombre || ''), 'es'));
+
+const updateOrderDriverOptions = () => {
+  const selectedUid = orderDriverInput.value;
+  orderDriverInput.replaceChildren(new Option('Guardar sin asignar', ''));
+  getAvailableDrivers().forEach(([id, driver]) => {
+    orderDriverInput.add(new Option(`${driver.nombre || 'Repartidor'} · ${driver.placa || 'Sin placa'}`, id));
+  });
+  if (Array.from(orderDriverInput.options).some(option => option.value === selectedUid)) {
+    orderDriverInput.value = selectedUid;
+  }
 };
 
 const getAnonymousUser = () => new Promise((resolve, reject) => {
@@ -138,7 +176,15 @@ const renderDriverList = drivers => {
       row.append(contact);
     }
 
-    if (isActive) {
+    const activeOrder = Object.values(orderRecords).find(order =>
+      order && order.driverUid === id && ACTIVE_ORDER_STATES.has(order.status)
+    );
+    if (activeOrder) {
+      const assigned = document.createElement('p');
+      assigned.className = 'driver-row-signal';
+      assigned.textContent = `Pedido activo: ${activeOrder.store || 'Pedido'} (${activeOrder.status})`;
+      row.append(assigned);
+    } else if (isActive) {
       const nextState = data.estado === 'En reparto' ? 'Disponible' : 'En reparto';
       const statusButton = document.createElement('button');
       statusButton.className = 'driver-status-button';
@@ -165,7 +211,9 @@ const renderDriverList = drivers => {
 };
 
 const renderDrivers = snapshot => {
+  driverSnapshot = snapshot;
   const records = snapshot.val() || {};
+  driverRecords = records;
   const entries = Object.entries(records)
     .map(([id, data]) => ({ id, data: data || {} }))
     .filter(({ data }) => typeof data.nombre === 'string' && typeof data.placa === 'string');
@@ -173,7 +221,7 @@ const renderDrivers = snapshot => {
   startOfDay.setHours(0, 0, 0, 0);
   const active = entries.filter(({ data }) => data.activo === true);
   const todayCount = active.filter(({ data }) => Number(data.inicioTurno) >= startOfDay.getTime()).length;
-  const availableCount = active.filter(({ data }) => data.estado === 'Disponible').length;
+  const availableCount = active.filter(({ id, data }) => data.estado === 'Disponible' && !hasActiveOrder(id)).length;
   const deliveryCount = active.filter(({ data }) => data.estado === 'En reparto').length;
 
   document.getElementById('count-today').textContent = String(todayCount);
@@ -204,6 +252,179 @@ const renderDrivers = snapshot => {
   renderDriverList(entries.sort((left, right) => String(left.data.nombre || '').localeCompare(String(right.data.nombre || ''), 'es')));
 };
 
+const assignOrder = async (orderId, driverId) => {
+  const order = orderRecords[orderId];
+  const driver = driverRecords[driverId];
+  if (!order || !['Pendiente', 'Rechazado'].includes(order.status)) return;
+  if (!driver || driver.activo !== true || driver.estado !== 'Disponible' || hasActiveOrder(driverId)) {
+    setAdminStatus('Ese repartidor ya no está disponible. Actualiza la lista e intenta de nuevo.', 'error');
+    return;
+  }
+
+  const updates = {
+    [`orders/${orderId}/status`]: 'Asignado',
+    [`orders/${orderId}/driverUid`]: driverId,
+    [`orders/${orderId}/driverName`]: driver.nombre || 'Repartidor',
+    [`orders/${orderId}/assignedAt`]: serverTimestamp(),
+    [`orders/${orderId}/updatedAt`]: serverTimestamp(),
+    [`drivers/${driverId}/estado`]: 'En reparto'
+  };
+
+  try {
+    await update(ref(db), updates);
+    setAdminStatus(`Pedido asignado a ${driver.nombre || 'un repartidor'}.`, 'success');
+  } catch (error) {
+    console.error('No se pudo asignar el pedido:', error);
+    setAdminStatus('No se pudo asignar el pedido. Comprueba los permisos y la conexión.', 'error');
+  }
+};
+
+const cancelOrder = async orderId => {
+  const order = orderRecords[orderId];
+  if (!order || ['Entregado', 'Cancelado'].includes(order.status)) return;
+
+  const updates = {
+    [`orders/${orderId}/status`]: 'Cancelado',
+    [`orders/${orderId}/driverUid`]: '',
+    [`orders/${orderId}/updatedAt`]: serverTimestamp()
+  };
+  if (order.driverUid && ACTIVE_ORDER_STATES.has(order.status)) {
+    updates[`drivers/${order.driverUid}/estado`] = 'Disponible';
+  }
+
+  try {
+    await update(ref(db), updates);
+    setAdminStatus('Pedido cancelado.', 'success');
+  } catch (error) {
+    console.error('No se pudo cancelar el pedido:', error);
+    setAdminStatus('No se pudo cancelar el pedido. Comprueba los permisos y la conexión.', 'error');
+  }
+};
+
+const renderOrderList = () => {
+  const orders = Object.entries(orderRecords)
+    .filter(([, order]) => order && typeof order.store === 'string')
+    .sort((left, right) => Number(right[1].createdAt || 0) - Number(left[1].createdAt || 0));
+  orderList.replaceChildren();
+
+  if (!orders.length) {
+    const empty = document.createElement('li');
+    empty.className = 'driver-list-empty';
+    empty.textContent = 'Todavía no hay pedidos registrados.';
+    orderList.append(empty);
+    return;
+  }
+
+  orders.forEach(([id, order]) => {
+    const item = document.createElement('li');
+    item.className = 'admin-order-card';
+
+    const heading = document.createElement('div');
+    heading.className = 'admin-order-heading';
+    const title = document.createElement('strong');
+    title.textContent = `${order.store} · #${id.slice(-6).toUpperCase()}`;
+    const status = document.createElement('span');
+    status.className = 'admin-order-status';
+    status.dataset.status = order.status || '';
+    status.textContent = order.status || 'Estado desconocido';
+    heading.append(title, status);
+    item.append(heading);
+
+    const customer = document.createElement('p');
+    customer.textContent = `Cliente: ${order.customerName || '—'} · ${order.phone || '—'}`;
+    const items = document.createElement('p');
+    items.textContent = `Pedido: ${order.items || '—'}`;
+    const address = document.createElement('p');
+    address.textContent = `Entrega: ${order.address || '—'}`;
+    const assignment = document.createElement('p');
+    assignment.textContent = `Repartidor: ${order.driverName || 'Sin asignar'}`;
+    const payment = document.createElement('p');
+    payment.textContent = `Pago: ${order.payment || '—'} · Tarifa: ${order.fare || '—'}`;
+    const created = document.createElement('p');
+    created.className = 'admin-order-meta';
+    const timestamp = Number(order.createdAt);
+    created.textContent = Number.isFinite(timestamp) && timestamp > 0
+      ? `Registrado: ${new Date(timestamp).toLocaleString('es-PE')}`
+      : 'Fecha no disponible';
+    item.append(customer, items, address, payment, assignment, created);
+    if (order.notes) {
+      const notes = document.createElement('p');
+      notes.textContent = `Notas: ${order.notes}`;
+      item.append(notes);
+    }
+
+    if (order.phone) {
+      const digits = String(order.phone).replace(/\D/g, '');
+      if (digits.length >= 7 && digits.length <= 15) {
+        const whatsapp = document.createElement('a');
+        whatsapp.className = 'driver-whatsapp';
+        whatsapp.href = `https://wa.me/${digits.startsWith('51') ? digits : `51${digits}`}`;
+        whatsapp.target = '_blank';
+        whatsapp.rel = 'noopener noreferrer';
+        whatsapp.textContent = 'Contactar cliente';
+        item.append(whatsapp);
+      }
+    }
+
+    if (['Pendiente', 'Rechazado'].includes(order.status)) {
+      const assignmentControls = document.createElement('div');
+      assignmentControls.className = 'admin-order-actions';
+      const select = document.createElement('select');
+      select.className = 'admin-order-driver-select';
+      select.setAttribute('aria-label', `Repartidor para pedido de ${order.customerName || 'cliente'}`);
+      select.add(new Option('Selecciona un repartidor', ''));
+      getAvailableDrivers().forEach(([driverId, driver]) => {
+        select.add(new Option(`${driver.nombre || 'Repartidor'} · ${driver.placa || 'Sin placa'}`, driverId));
+      });
+      const assignButton = document.createElement('button');
+      assignButton.className = 'admin-order-action-button';
+      assignButton.type = 'button';
+      assignButton.textContent = 'Asignar';
+      assignButton.disabled = select.options.length < 2;
+      assignButton.addEventListener('click', async () => {
+        if (!select.value) return;
+        assignButton.disabled = true;
+        await assignOrder(id, select.value);
+        if (assignButton.isConnected) assignButton.disabled = false;
+      });
+      assignmentControls.append(select, assignButton);
+      item.append(assignmentControls);
+    }
+
+    if (!['Entregado', 'Cancelado'].includes(order.status)) {
+      const cancelButton = document.createElement('button');
+      cancelButton.className = 'admin-order-action-button admin-order-cancel';
+      cancelButton.type = 'button';
+      cancelButton.textContent = 'Cancelar pedido';
+      cancelButton.addEventListener('click', async () => {
+        cancelButton.disabled = true;
+        await cancelOrder(id);
+        if (cancelButton.isConnected) cancelButton.disabled = false;
+      });
+      item.append(cancelButton);
+    }
+
+    orderList.append(item);
+  });
+};
+
+const listenForOrders = () => {
+  if (stopOrderListener) stopOrderListener();
+  stopOrderListener = onValue(ref(db, 'orders'), snapshot => {
+    orderRecords = snapshot.val() || {};
+    renderOrderList();
+    updateOrderDriverOptions();
+    if (driverSnapshot) renderDrivers(driverSnapshot);
+  }, error => {
+    console.error('Firebase denegó o interrumpió la lectura de pedidos:', error);
+    setAdminStatus('No se pudieron cargar los pedidos.', 'error');
+    const empty = document.createElement('li');
+    empty.className = 'driver-list-empty';
+    empty.textContent = 'Firebase no autorizó la lectura de pedidos. Revisa las reglas de la base de datos.';
+    orderList.replaceChildren(empty);
+  });
+};
+
 const listenForDrivers = () => {
   if (stopDriverListener) stopDriverListener();
   setAdminStatus('Escuchando repartidores…');
@@ -222,6 +443,80 @@ const listenForDrivers = () => {
   });
 };
 
+orderForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!orderForm.reportValidity()) return;
+
+  const phone = document.getElementById('order-phone').value.trim();
+  const phoneDigits = phone.replace(/\D/g, '');
+  if (phoneDigits.length < 7 || phoneDigits.length > 15) {
+    setOrderMessage('Ingresa un número de WhatsApp válido, de 7 a 15 dígitos.', 'error');
+    return;
+  }
+
+  const driverId = orderDriverInput.value;
+  const driver = driverId ? driverRecords[driverId] : null;
+  if (driverId && (!driver || driver.activo !== true || driver.estado !== 'Disponible' || hasActiveOrder(driverId))) {
+    setOrderMessage('El repartidor seleccionado ya no está disponible. Actualiza la lista.', 'error');
+    updateOrderDriverOptions();
+    return;
+  }
+
+  const orderRef = push(ref(db, 'orders'));
+  const value = id => document.getElementById(id).value.trim();
+  const order = {
+    store: value('order-store'),
+    customerName: value('order-customer-name'),
+    phone,
+    items: value('order-items'),
+    address: value('order-address'),
+    payment: value('order-payment'),
+    fare: value('order-fare'),
+    notes: value('order-notes'),
+    status: driverId ? 'Asignado' : 'Pendiente',
+    driverUid: driverId,
+    driverName: driver ? driver.nombre || 'Repartidor' : '',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    createdBy: adminUid
+  };
+  if (driverId) order.assignedAt = serverTimestamp();
+  const updates = {
+    [`orders/${orderRef.key}`]: order
+  };
+  if (driverId) updates[`drivers/${driverId}/estado`] = 'En reparto';
+
+  const submitButton = orderForm.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  try {
+    await update(ref(db), updates);
+    orderForm.reset();
+    updateOrderDriverOptions();
+    setOrderMessage(driverId ? 'Pedido guardado y asignado.' : 'Pedido guardado como pendiente de asignación.', 'success');
+  } catch (error) {
+    console.error('No se pudo guardar el pedido:', error);
+    setOrderMessage('No se pudo guardar. Comprueba los permisos y la conexión.', 'error');
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+
+document.getElementById('show-drivers-view').addEventListener('click', () => {
+  driverWorkspace.hidden = false;
+  ordersWorkspace.hidden = true;
+  document.getElementById('show-drivers-view').setAttribute('aria-pressed', 'true');
+  document.getElementById('show-orders-view').setAttribute('aria-pressed', 'false');
+  if (map) map.invalidateSize();
+});
+
+document.getElementById('show-orders-view').addEventListener('click', () => {
+  driverWorkspace.hidden = true;
+  ordersWorkspace.hidden = false;
+  document.getElementById('show-drivers-view').setAttribute('aria-pressed', 'false');
+  document.getElementById('show-orders-view').setAttribute('aria-pressed', 'true');
+  updateOrderDriverOptions();
+});
+
 const connectAdmin = async () => {
   if (!firebaseConfigured) {
     setLockMessage(`Completa en firebase-config.js: ${missingFirebaseFields.join(', ')}.`, 'error');
@@ -237,6 +532,7 @@ const connectAdmin = async () => {
     uidText.textContent = adminUid;
     uidCard.hidden = false;
     listenForDrivers();
+    listenForOrders();
   } catch (error) {
     console.error('No se pudo conectar el panel de administración:', error);
     setAdminStatus('No se pudo conectar con Firebase.', 'error');
@@ -261,9 +557,17 @@ document.getElementById('admin-lock-button').addEventListener('click', () => {
     stopDriverListener();
     stopDriverListener = null;
   }
+  if (stopOrderListener) {
+    stopOrderListener();
+    stopOrderListener = null;
+  }
   markers.forEach(marker => map.removeLayer(marker));
   markers.clear();
   driverList.replaceChildren();
+  orderList.replaceChildren();
+  orderRecords = {};
+  driverRecords = {};
+  driverSnapshot = null;
   dashboard.hidden = true;
   lockScreen.hidden = false;
   document.getElementById('admin-pin').value = '';
@@ -281,7 +585,10 @@ document.getElementById('copy-admin-uid').addEventListener('click', async () => 
   }
 });
 
-document.getElementById('retry-admin-read').addEventListener('click', listenForDrivers);
+document.getElementById('retry-admin-read').addEventListener('click', () => {
+  listenForDrivers();
+  listenForOrders();
+});
 
 if (sessionStorage.getItem(PIN_SESSION_KEY) === 'true') {
   await connectAdmin();

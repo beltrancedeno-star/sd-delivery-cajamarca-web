@@ -41,6 +41,10 @@
     <header class="admin-topbar">
       <h1 class="admin-heading">Repartidores en Cajamarca</h1>
       <div class="admin-topbar-actions">
+        <div class="admin-view-switch" role="group" aria-label="Vista del panel">
+          <button class="admin-view-button" id="show-drivers-view" type="button" aria-pressed="true">Repartidores</button>
+          <button class="admin-view-button" id="show-orders-view" type="button" aria-pressed="false">Pedidos</button>
+        </div>
         <p class="admin-status" id="admin-status" role="status" aria-live="polite">Conectando…</p>
         <button class="admin-lock-button" id="admin-lock-button" type="button">Bloquear panel</button>
       </div>
@@ -80,6 +84,52 @@
         </ul>
       </aside>
     </div>
+
+    <section class="admin-orders-workspace" id="admin-orders-workspace" aria-label="Gestión de pedidos" hidden>
+      <form class="admin-order-form" id="admin-order-form">
+        <h2>Registrar pedido confirmado</h2>
+        <p>Registra aquí los pedidos que ya confirmaste por WhatsApp.</p>
+        <label class="tracking-field" for="order-store">Comercio
+          <input id="order-store" name="store" minlength="2" maxlength="80" required />
+        </label>
+        <label class="tracking-field" for="order-customer-name">Nombre del cliente
+          <input id="order-customer-name" name="customerName" minlength="2" maxlength="100" required />
+        </label>
+        <label class="tracking-field" for="order-phone">WhatsApp del cliente
+          <input id="order-phone" name="phone" type="tel" inputmode="tel" maxlength="20" required />
+        </label>
+        <label class="tracking-field" for="order-items">Productos y cantidades
+          <textarea id="order-items" name="items" minlength="2" maxlength="1000" required></textarea>
+        </label>
+        <label class="tracking-field" for="order-address">Dirección de entrega
+          <textarea id="order-address" name="address" minlength="4" maxlength="300" required></textarea>
+        </label>
+        <div class="admin-order-form-row">
+          <label class="tracking-field" for="order-payment">Pago
+            <input id="order-payment" name="payment" maxlength="80" />
+          </label>
+          <label class="tracking-field" for="order-fare">Tarifa confirmada
+            <input id="order-fare" name="fare" maxlength="20" placeholder="Ej. S/ 8.00" />
+          </label>
+        </div>
+        <label class="tracking-field" for="order-notes">Notas
+          <textarea id="order-notes" name="notes" maxlength="500"></textarea>
+        </label>
+        <label class="tracking-field" for="order-driver">Asignar repartidor disponible
+          <select id="order-driver" name="driverUid">
+            <option value="">Guardar sin asignar</option>
+          </select>
+        </label>
+        <button class="tracking-button" type="submit">Guardar pedido</button>
+        <p class="tracking-message" id="admin-order-message" role="status" aria-live="polite"></p>
+      </form>
+      <section class="admin-orders-list-panel" aria-labelledby="admin-orders-title">
+        <h2 id="admin-orders-title">Pedidos registrados</h2>
+        <ul class="admin-order-list" id="admin-order-list" aria-live="polite">
+          <li class="driver-list-empty">Cargando pedidos…</li>
+        </ul>
+      </section>
+    </section>
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
