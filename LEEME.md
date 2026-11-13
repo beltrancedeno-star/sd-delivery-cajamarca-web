@@ -17,7 +17,7 @@ SD Delivery administra la publicación: por cada comercio, coloca sus archivos e
 - WhatsApp y teléfono: +51 957 107 660
 - Dirección: Jirón Chepén 1142, urbanización La Perlita, Cajamarca
 - Facebook, Instagram y TikTok: perfiles proporcionados por SD Delivery
-- El video de la moto está en `assets/moto-delivery.mp4`; se carga al iniciar la reproducción del usuario para ahorrar datos.
+- El video de la moto está en `assets/moto-delivery.mp4` y muestra `assets/moto-delivery-poster.jpg` como portada. El video se carga al iniciar la reproducción del usuario para ahorrar datos.
 
 El formulario de pedido solicita el comercio, nombre, teléfono, productos y cantidades, dirección, forma de pago preferida y notas. En el mapa se marca el punto A (tienda seleccionada) y el punto B (entrega del cliente); con ambos puntos se estima por ruta vehicular usando OSRM y se aplica el tarifario publicado. El mapa es opcional: si no se pueden marcar los puntos, el pedido puede enviarse con la dirección escrita y la tarifa se confirma por WhatsApp. Para más de 3 km, el cálculo es distancia de ruta × S/ 2, redondeado a céntimos. El resumen incluye coordenadas, distancia y tarifa estimada en WhatsApp. El cliente debe revisar y pulsar **Enviar**. Esta página no almacena solicitudes en un servidor.
 
